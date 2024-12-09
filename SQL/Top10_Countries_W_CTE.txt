@@ -1,0 +1,60 @@
+-- Determine top 10 countries which have the largest numbers of customers and
+-- how many of the top 5 customers these countries have, using Common Table Expressions
+
+WITH top_countries AS
+(					
+	SELECT country.country, COUNT(*) AS total_customers
+	FROM customer
+	INNER JOIN address ON customer.address_id=address.address_id
+	INNER JOIN city on address.city_id=city.city_id
+	INNER JOIN country on city.country_id=country.country_id
+	GROUP BY country.country
+	ORDER BY COUNT(*) DESC
+	LIMIT 10
+),
+	top_cities AS
+(
+	SELECT C.city, D.country, COUNT(*)
+	FROM customer A
+	INNER JOIN address B ON A.address_id=B.address_id
+	INNER JOIN city C on B.city_id=C.city_id
+	INNER JOIN country D on C.country_id=D.country_id
+	WHERE D.country IN 
+	(
+		SELECT top_countries.country
+		FROM top_countries
+	)
+	GROUP BY D.country, C.city
+	ORDER BY COUNT(*) DESC
+	LIMIT 10
+),
+	top_5_customers AS
+(
+	SELECT B.customer_id, B.first_name, B.last_name, D.city, E.country, SUM(A.amount) AS total_amount
+	FROM payment A
+	INNER JOIN customer B ON A.customer_id=B.customer_id
+	INNER JOIN address C ON B.address_id=C.address_id
+	INNER JOIN city D on C.city_id=D.city_id
+	INNER JOIN country E on D.country_id=E.country_id
+	WHERE D.city IN 
+	(
+		SELECT city
+		FROM top_cities
+	)
+	GROUP BY B.customer_id, B.first_name, B.last_name, E.country, D.city
+	ORDER BY SUM(A.amount) DESC
+	LIMIT 5
+)
+
+SELECT	E.country, 
+COUNT(DISTINCT B.customer_id) AS all_customer_count,
+COUNT(DISTINCT top_5_customers) AS top_customer_count
+FROM customer B
+JOIN address C ON B.address_id = C.address_id
+JOIN city D ON C.city_id = D.city_id
+JOIN country E ON D.country_id = E.country_id
+LEFT JOIN
+top_5_customers ON B.customer_id = top_5_customers.customer_id
+GROUP BY E.country
+ORDER BY all_customer_count DESC
+LIMIT 10;

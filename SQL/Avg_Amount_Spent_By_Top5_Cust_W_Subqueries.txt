@@ -1,4 +1,4 @@
---Find out the average amount spent by the top 5 customers from top 10 countries
+--Find out the average amount spent by the top 5 customers from top 10 countries, using subqueries
 
 SELECT AVG(total_amount_paid.total_amount) AS average_amount
 FROM

@@ -1,5 +1,5 @@
 -- Determine top 10 countries which have the largest numbers of customers and
--- how many of the top 5 customers these countries have
+-- how many of the top 5 customers these countries have, using subqueries
 
 SELECT E.country, COUNT(DISTINCT B.customer_id) AS all_customer_count, COUNT(DISTINCT top_5_customers.customer_id) AS top_customer_count
 FROM customer B
