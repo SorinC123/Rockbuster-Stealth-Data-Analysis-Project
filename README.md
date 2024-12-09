@@ -25,5 +25,6 @@ The dataset contains detailed information about Rockbuster's film inventory, cus
 - Locations of the customers with a high lifetime value.
 - Regions generating the highest sales.
 
+[Visualizations on Tableau Public](https://public.tableau.com/app/profile/sorin.catighera/viz/RockbusterStealthDataAnalysisV2/MovieRentals-Most)
 
 
